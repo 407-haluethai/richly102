@@ -12,4 +12,3 @@ class TransactionSeeder extends Seeder
         Transaction::factory(50)->create(); // สร้างธุรกรรม 50 รายการ
     }
 }
-

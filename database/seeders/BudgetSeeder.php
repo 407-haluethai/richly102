@@ -12,4 +12,3 @@ class BudgetSeeder extends Seeder
         Budget::factory(15)->create(); // สร้างงบประมาณ 15 รายการ
     }
 }
-

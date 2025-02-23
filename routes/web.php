@@ -26,6 +26,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/transactions', [TransactionController::class, 'index']);
 });
 
+Route::put('/transactions/{id}', [TransactionController::class, 'update']);
+Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
+Route::get('/transactions/{id}', [TransactionController::class, 'show']);
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
 });

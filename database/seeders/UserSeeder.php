@@ -12,4 +12,3 @@ class UserSeeder extends Seeder
         User::factory(10)->create(); // สร้างผู้ใช้ 10 คน
     }
 }
-

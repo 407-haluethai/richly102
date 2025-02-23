@@ -3,40 +3,33 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens; // ✅ เพิ่มบรรทัดนี้
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable
+class Transaction extends Model
 {
-    use HasApiTokens, HasFactory, Notifiable; // ✅ ต้องมี HasApiTokens
+    use HasFactory;
 
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'user_id',
+        'category_id',
+        'category_name',
+        'category_icon',
+        'amount',
+        'transaction_type',
+        'description',
+        'transaction_date',
     ];
 
-    public function transactions()
+
+
+    public function user()
     {
-        return $this->hasMany(Transaction::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function categories()
+    public function category()
     {
-        return $this->hasMany(Category::class);
-    }
-
-    public function budgets()
-    {
-        return $this->hasMany(Budget::class);
-    }
-
-    public function reports()
-    {
-        return $this->hasMany(Report::class);
+        return $this->belongsTo(Category::class);
+        // return $this->belongsTo(Category::class, 'category_id');
     }
 }
-
-
-

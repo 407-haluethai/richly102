@@ -12,7 +12,8 @@ class Category extends Model
     protected $fillable = [
         'user_id',
         'name',
-        'type', // 'income' หรือ 'expense'
+        'type',
+        'icon',
     ];
 
     public function user()

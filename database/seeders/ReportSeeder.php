@@ -12,4 +12,3 @@ class ReportSeeder extends Seeder
         Report::factory(10)->create(); // สร้างรายงาน 10 รายการ
     }
 }
-

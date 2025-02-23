@@ -3,47 +3,104 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Category;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 
 class CategorySeeder extends Seeder
 {
     public function run()
     {
-        $userId = 1; // กำหนด ID ของ User ที่จะใช้ (ถ้ามีหลาย User อาจต้องใช้ auth()->id())
-
-        // หมวดหมู่รายรับ
-        $incomeCategories = [
-            'ได้รับคืน', 'ได้พิเศษ', 'รายได้', 'ได้ฟรี', 'รายได้ธุรกิจ',
-            'เงินปันผล', 'ยืมมา', 'อื่นๆ'
-        ];
-
-        // หมวดหมู่รายจ่าย
-        $expenseCategories = [
-            'อาหาร', 'เดินทาง', 'ที่พัก', 'ของใช้', 'บริการ', 'ถูกยืม', 'ค่ารักษา',
-            'สัตว์เลี้ยง', 'บริจาค', 'การศึกษา', 'คนรัก', 'เสื้อผ้า', 'เครื่องสำอาง',
-            'เครื่องประดับ', 'บันเทิง', 'โทรศัพท์', 'ครอบครัว', 'ประกันภัย', 'กีฬา',
-            'งานอดิเรก', 'ซอฟต์แวร์', 'ฮาร์ดแวร์', 'ของสะสม', 'ภาษี', 'สารธารณูปโภค',
-            'ยานพาหนะ', 'ต้นไม้', 'คืนเงิน', 'ธุรกิจ', 'ค่าธรรมเนียม', 'อื่นๆ'
-        ];
-
-        // สร้างหมวดหมู่รายรับ
-        foreach ($incomeCategories as $category) {
-            Category::create([
-                'user_id' => $userId,
-                'name' => $category,
-                'type' => 'income',
-            ]);
-        }
-
-        // สร้างหมวดหมู่รายจ่าย
-        foreach ($expenseCategories as $category) {
-            Category::create([
-                'user_id' => $userId,
-                'name' => $category,
+        DB::table('categories')->insert([
+            [
+                'id' => 1,
+                'user_id' => 1,
+                'name' => 'อาหาร',
+                'icon' => '🍔',
                 'type' => 'expense',
-            ]);
-        }
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 2,
+                'user_id' => 1,
+                'name' => 'การเดินทาง',
+                'icon' => '🚗',
+                'type' => 'expense',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 3,
+                'user_id' => 1,
+                'name' => 'ที่อยู่อาศัย',
+                'icon' => '🏠',
+                'type' => 'expense',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 4,
+                'user_id' => 1,
+                'name' => 'ของใช้',
+                'icon' => '🛒',
+                'type' => 'expense',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 5,
+                'user_id' => 1,
+                'name' => 'อื่นๆ',
+                'icon' => '🛠️',
+                'type' => 'expense',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 6,
+                'user_id' => 1,
+                'name' => 'เงินเดือน',
+                'icon' => '💵',
+                'type' => 'income',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 7,
+                'user_id' => 1,
+                'name' => 'โบนัส',
+                'icon' => '🎉',
+                'type' => 'income',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 8,
+                'user_id' => 1,
+                'name' => 'ธุรกิจ',
+                'icon' => '🏢',
+                'type' => 'income',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 9,
+                'user_id' => 1,
+                'name' => 'ครอบครัว',
+                'icon' => '👨‍👩‍👧‍👦',
+                'type' => 'income',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 10,
+                'user_id' => 1,
+                'name' => 'อื่นๆ',
+                'icon' => '🛠️',
+                'type' => 'income',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+        ]);
     }
 }
-
-

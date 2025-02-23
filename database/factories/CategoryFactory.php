@@ -27,5 +27,3 @@ class CategoryFactory extends Factory
         ];
     }
 }
-
-
