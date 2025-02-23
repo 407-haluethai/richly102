@@ -16,13 +16,12 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->decimal('amount', 10, 2);
             $table->enum('transaction_type', ['income', 'expense']);
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade'); // ✅ แก้ตรงนี้
             $table->text('description')->nullable();
             $table->date('transaction_date');
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.

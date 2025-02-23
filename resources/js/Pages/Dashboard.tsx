@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, usePage } from "@inertiajs/react";
-
+import Dropdown from "@/Components/Dropdown";
 // 🟡 กำหนด Type ของ Transaction
 interface Transaction {
     id: number;
@@ -140,7 +140,7 @@ export default function Dashboard() {
     const fetchTransactions = async () => {
         console.log("🔄 กำลังโหลดข้อมูลธุรกรรม...");
         try {
-            const response = await fetch("/transactions?user_id=${userId}");
+            const response = await fetch(`/transactions?user_id=${userId}`);
             if (!response.ok)
                 throw new Error(`HTTP error! status: ${response.status}`);
 
@@ -220,17 +220,59 @@ export default function Dashboard() {
         <AuthenticatedLayout>
             <Head title="Dashboard" />
 
-            {/* 🔹 Navbar ด้านบน */}
-            <div className="bg-amber-500 text-white p-4 flex justify-between items-center shadow-md">
-                <button className="text-white text-xl">🔍</button>
-                <h2 className="text-lg font-semibold">บัญชีของฉัน</h2>
+        {/* 🔹 ส่วนหัวของหน้า */}
+        <div className="bg-amber-500 text-white p-4 flex justify-between items-center shadow-md">
+            <button className="text-white text-xl">🔍</button>
+            <h2 className="text-lg font-semibold">บัญชีของฉัน</h2>
+
+            {/* 🔹 ปุ่ม "รายละเอียด" + Dropdown Profile */}
+            <div className="flex items-center space-x-4">
+                {/* ปุ่ม รายละเอียด */}
                 <Link
                     href="/details"
                     className="bg-white text-amber-500 px-3 py-1 rounded-lg shadow"
                 >
                     รายละเอียด
                 </Link>
+
+                {/*{/* Dropdown Profile */}
+                <Dropdown>
+                    <Dropdown.Trigger>
+                        <span className="inline-flex rounded-md">
+                            <button
+                                type="button"
+                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-1 text-sm font-medium text-amber-500 transition duration-150 ease-in-out hover:text-amber-700 focus:outline-none"
+                            >
+                                {auth.user.name} {/* ✅ ใช้ user.name */}
+                                <svg
+                                    className="-me-0.5 ms-2 h-4 w-4"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                >
+                                    <path
+                                        fillRule="evenodd"
+                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                        clipRule="evenodd"
+                                    />
+                                </svg>
+                            </button>
+                        </span>
+                    </Dropdown.Trigger>
+
+                    <Dropdown.Content>
+                        {/* ✅ แก้ href ให้เป็นพาธตรง ถ้าฟังก์ชัน route() ใช้งานไม่ได้ */}
+                        <Dropdown.Link href="/profile/edit">
+                            Profile
+                        </Dropdown.Link>
+                        <Dropdown.Link href="/logout" method="post" as="button">
+                            Log Out
+                        </Dropdown.Link>
+                    </Dropdown.Content>
+                </Dropdown>
             </div>
+        </div>
+
 
             {/* 🔹 เปลี่ยนสีพื้นหลังของหน้า */}
             <div className="min-h-screen bg-amber-100 p-4">

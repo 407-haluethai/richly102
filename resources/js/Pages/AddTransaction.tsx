@@ -33,27 +33,17 @@ const AddTransaction = () => {
   // โหลดข้อมูลธุรกรรม (สำหรับแก้ไข)
   useEffect(() => {
     if (transactionId) {
-      axios
-        .get(`/transactions/${transactionId}`)
-        .then((response) => {
-          const data = response.data;
-          setAmount(Math.abs(data.amount)?.toString() || "");
-          setNote(data.description || "");
-          setTransactionType(data.amount < 0 ? "expense" : "income");
-
-          // เลือกรายการหมวดหมู่ตามประเภทที่ได้จาก data
-          const categoryList = data.amount < 0 ? expenseCategories : incomeCategories;
-          const foundCategory = categoryList.find((cat) => cat.id === data.category_id);
-          if (foundCategory) {
-            setCategory(foundCategory.id);
-          } else {
-            console.warn("⚠️ ไม่พบหมวดหมู่ที่เลือก, ใช้ค่าเริ่มต้นแทน");
-            setCategory(categoryList[0].id);
-          }
-        })
-        .catch((error) => console.error("❌ โหลดข้อมูลไม่สำเร็จ", error));
+        axios.get(`/transactions/${transactionId}`)
+            .then(response => {
+                const data = response.data;
+                setAmount(data.amount.toString());
+                setNote(data.description || "");
+                setTransactionType(data.transaction_type);
+                setCategory(data.category_id);
+            })
+            .catch(error => console.error("❌ โหลดข้อมูลไม่สำเร็จ", error));
     }
-  }, [transactionId]);
+}, [transactionId]);
 
   // เมื่อ transactionType เปลี่ยน ตรวจสอบว่า category ที่เลือกอยู่ในรายการของประเภทใหม่หรือไม่
   useEffect(() => {
@@ -91,9 +81,9 @@ const AddTransaction = () => {
 
   // ส่งข้อมูลธุรกรรม (POST หรือ PUT)
   const handleSubmit = async () => {
-    if (!amount || amount === "Error") {
-      console.error("❌ กรุณากรอกจำนวนเงินที่ถูกต้อง");
-      return;
+    if (!amount) {
+        console.error("❌ กรุณากรอกจำนวนเงินที่ถูกต้อง");
+        return;
     }
 
     const finalAmount =

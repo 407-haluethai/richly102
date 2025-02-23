@@ -47,57 +47,51 @@ class TransactionController extends Controller
         try {
             Log::info("📥 Data received in Backend:", $request->all());
 
-            // Validate input
             $validated = $request->validate([
                 'category_id'      => 'required|integer|exists:categories,id',
                 'amount'           => 'required|numeric',
                 'transaction_type' => 'required|string',
                 'description'      => 'nullable|string',
                 'transaction_date' => 'required|date',
-            ]);
+        ]);
 
-            Log::info("✅ Validated Data:", $validated);
+        $userId = Auth::id();
+        if (!$userId) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
+        }
 
-            $userId = Auth::id();
-            if (!$userId) {
-                return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
-            }
+        // ตรวจสอบว่า category_id มีอยู่จริง (แต่ไม่ต้องตรวจ user_id)
+        $category = Category::find($validated['category_id']);
 
-            // ตรวจสอบว่าหมวดหมู่ที่เลือกมีอยู่จริงหรือไม่
-            $category = Category::where('id', $validated['category_id'])
-                ->where('user_id', $userId)
-                ->first();
+        if (!$category) {
+            return response()->json(['success' => false, 'message' => 'หมวดหมู่ที่เลือกไม่ถูกต้อง'], 400);
+        }
 
-            if (!$category) {
-                return response()->json(['success' => false, 'message' => 'หมวดหมู่ที่เลือกไม่ถูกต้อง'], 400);
-            }
+        // บันทึกธุรกรรม
+        $transaction = Transaction::create([
+            'user_id'           => $userId,
+            'category_id'       => $category->id,
+            'amount'            => $validated['amount'],
+            'transaction_type'  => $validated['transaction_type'],
+            'description'       => $validated['description'],
+            'transaction_date'  => $validated['transaction_date'],
+        ]);
 
-            Log::info("📌 Selected Category:", ['id' => $category->id, 'icon' => $category->icon]);
-
-            // บันทึกธุรกรรม
-            $transaction = Transaction::create([
-                'user_id'           => $userId,
-                'category_id'       => $category->id,
-                'amount'            => $validated['amount'],
-                'transaction_type'  => $validated['transaction_type'],
-                'description'       => $validated['description'],
-                'transaction_date'  => $validated['transaction_date'],
-            ]);
-
-            return response()->json([
-                'success'     => true,
-                'transaction' => $transaction,
-                'category'    => $category,
-            ]);
+        return response()->json([
+            'success'     => true,
+            'transaction' => $transaction,
+            'category'    => $category,
+        ]);
 
         } catch (\Exception $e) {
-            Log::error("❌ Error: " . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+        Log::error("❌ Error: " . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage(),
+        ], 500);
         }
     }
+
 
     /**
      * Display the specified resource.
@@ -123,8 +117,6 @@ class TransactionController extends Controller
         return response()->json(['message' => 'ไม่พบธุรกรรม'], 404);
     }
 
-    $userId = Auth::id();
-
     $validated = $request->validate([
         'category_id'      => 'required|integer|exists:categories,id',
         'amount'           => 'required|numeric',
@@ -133,16 +125,14 @@ class TransactionController extends Controller
         'transaction_date' => 'required|date',
     ]);
 
-    // ตรวจสอบว่าหมวดหมู่มีอยู่หรือไม่
-    $category = Category::where('id', $validated['category_id'])
-        ->where('user_id', $userId)
-        ->first();
+    // ✅ ใช้หมวดหมู่ร่วมกัน (ไม่ต้องเช็ค user_id)
+    $category = Category::find($validated['category_id']);
 
     if (!$category) {
         return response()->json(['success' => false, 'message' => 'หมวดหมู่ที่เลือกไม่ถูกต้อง'], 400);
     }
 
-    // อัปเดตรายการธุรกรรม
+    // ✅ อัปเดตรายการธุรกรรม
     $transaction->update([
         'category_id'      => $category->id,
         'amount'           => $validated['amount'],
