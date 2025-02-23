@@ -97,11 +97,15 @@ const AddTransaction = () => {
     }
 
     const finalAmount =
-      transactionType === "expense"
-        ? `-${Math.abs(Number(amount))}`
-        : `${Math.abs(Number(amount))}`;
+    transactionType === "expense"
+      ? `-${Math.abs(Number(amount))}`
+      : `${Math.abs(Number(amount))}`;
 
     const transaction_date = new Date().toISOString().split("T")[0];
+    if (!category) {
+        console.error("❌ กรุณาเลือกหมวดหมู่");
+        return;
+    }
 
     const selectedCategory = categories.find((cat) => cat.id === category);
     if (!selectedCategory) {
@@ -110,50 +114,49 @@ const AddTransaction = () => {
     }
 
     const csrfToken =
-      document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "";
+    document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "";
     if (!csrfToken) {
-      console.error("❌ ไม่พบ CSRF Token");
-      return;
+        console.error("❌ ไม่พบ CSRF Token");
+        return;
     }
 
     const headers = {
-      "Content-Type": "application/json",
-      "X-CSRF-TOKEN": csrfToken,
-    };
+        "Content-Type": "application/json",
+        "X-CSRF-TOKEN": csrfToken,
+      };
 
-    const transactionData = {
-      category_id: selectedCategory.id,
-      category_name: selectedCategory.name,
-      category_icon: selectedCategory.icon,
-      amount: finalAmount,
-      transaction_type: transactionType,
-      description: note,
-      transaction_date,
-    };
+      const transactionData = {
+        category_id: category, // ส่ง category_id เท่านั้น
+        amount: finalAmount,
+        transaction_type: transactionType,
+        description: note,
+        transaction_date,
+      };
+
 
     console.log("📤 กำลังส่งข้อมูลไปยังเซิร์ฟเวอร์:", transactionData);
 
-    try {
-      let response;
-      if (transactionId) {
-        response = await axios.put(`/transactions/${transactionId}`, transactionData, { headers });
-      } else {
-        response = await axios.post("/transactions", transactionData, { headers });
-      }
+        try {
+            let response;
+            if (transactionId) {
+            response = await axios.put(`/transactions/${transactionId}`, transactionData, { headers });
+            } else {
+             response = await axios.post("/transactions", transactionData, { headers });
+            }
 
-      console.log("✅ Response จากเซิร์ฟเวอร์:", response.data);
+            console.log("✅ Response จากเซิร์ฟเวอร์:", response.data);
 
-      if (response.status === 200 || response.status === 201) {
-        console.log("✅ ธุรกรรมถูกบันทึกเรียบร้อย!");
-        window.dispatchEvent(new Event("transactionAdded"));
-        window.location.href = "/dashboard";
-      } else {
-        console.error("❌ บันทึกข้อมูลล้มเหลว:", response.status);
-      }
-    } catch (error: any) {
-      console.error("❌ Error ในการบันทึก:", error.response?.data || error.message);
-    }
-  };
+            if (response.status === 200 || response.status === 201) {
+            console.log("✅ ธุรกรรมถูกบันทึกเรียบร้อย!");
+            window.dispatchEvent(new Event("transactionAdded"));
+            window.location.href = "/dashboard";
+            } else {
+            console.error("❌ บันทึกข้อมูลล้มเหลว:", response.status);
+            }
+        } catch (error: any) {
+            console.error("❌ Error ในการบันทึก:", error.response?.data || error.message);
+        }
+    };
 
   return (
     <div className="min-h-screen bg-amber-50">

@@ -6,6 +6,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ReportController;
+
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
@@ -25,6 +27,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
     Route::get('/transactions', [TransactionController::class, 'index']);
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/reports/income-by-category', [ReportController::class, 'incomeByCategory']);
+    Route::get('/reports/expense-by-category', [ReportController::class, 'expenseByCategory']);
+});
+
 
 Route::put('/transactions/{id}', [TransactionController::class, 'update']);
 Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
